@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ('id', 'user', 'phone_number', 'email', 'is_active')
+        fields = ('id', 'user', 'phone_number', 'email', 'activated')
 
 class VerificationCodeSerializer(serializers.ModelSerializer):
     class Meta:
