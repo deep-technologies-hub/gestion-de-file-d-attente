@@ -77,23 +77,23 @@ WSGI_APPLICATION = 'vipass.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'verceldb',  # Database name
-#         'USER': 'default',  # Database user
-#         'PASSWORD': 'ri1UEhR5aldc',  # Database password
-#         'HOST': 'ep-icy-shape-46256900.us-east-1.postgres.vercel-storage.com',  # Database host
-#         'PORT': '5432',  # Database port (default PostgreSQL port)
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'verceldb',  # Database name
+        'USER': 'default',  # Database user
+        'PASSWORD': 'ri1UEhR5aldc',  # Database password
+        'HOST': 'ep-icy-shape-46256900.us-east-1.postgres.vercel-storage.com',  # Database host
+        'PORT': '5432',  # Database port (default PostgreSQL port)
+    }
+}
 
 
 
@@ -152,7 +152,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
