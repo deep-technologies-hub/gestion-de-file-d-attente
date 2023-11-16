@@ -70,7 +70,7 @@ class TicketSerializer(serializers.ModelSerializer):
         # Now we create the Ticket instance
         ticket = Ticket.objects.create(
             client=client,
-            issue=availability,
+            availability=availability,
             scheduled_time=validated_data.get('scheduled_time'),
             status=validated_data.get('status', 'pending')
         )
