@@ -1,7 +1,7 @@
 # Exemple pour urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ClientViewSet, ServiceViewSet, IssueViewSet, SubscriptionViewSet, TicketViewSet, LogoutView, RegisterView, VerifyCodeView, ResendCodeView, SendEmailView
+from .views import AvailabilityViewSet, ClientViewSet, ServiceViewSet, IssueViewSet, SubscriptionViewSet, TicketViewSet, LogoutView, RegisterView, VerifyCodeView, ResendCodeView, SendEmailView
 from rest_framework.authtoken.views import ObtainAuthToken
 
 router = DefaultRouter()
@@ -10,6 +10,7 @@ router.register(r'services', ServiceViewSet)
 router.register(r'issues', IssueViewSet)
 router.register(r'subscriptions', SubscriptionViewSet)
 router.register(r'tickets', TicketViewSet)
+router.register(r'availabilities', AvailabilityViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
