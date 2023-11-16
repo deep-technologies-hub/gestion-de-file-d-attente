@@ -53,7 +53,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     # Here we'll use `StringRelatedField` to show the string representation of the related model
     client = serializers.StringRelatedField(read_only=True)
-    issue = IssueSerializer(read_only=True)
+    availability = AvailabilitySerializer(read_only=True)
 
     class Meta:
         model = Ticket
