@@ -37,7 +37,7 @@ class Issue(models.Model):
     duration = models.DurationField(default=timedelta(minutes=30))
 
     def __str__(self):
-        return f"{self.service.name} - {self.name} (Priority: {self.priority})"
+        return f"{self.service.name} - {self.name}"
 
 class Availability(models.Model):
     issue = models.ForeignKey('Issue', on_delete=models.CASCADE, related_name='availabilities')
