@@ -66,7 +66,7 @@ class Ticket(models.Model):
     status = models.CharField(max_length=100, default='pending')  # Exemples: pending, confirmed, completed
 
     def __str__(self):
-        return f"{self.client.user.username} - {self.issue.service.name} for {self.scheduled_time}"
+        return f"{self.client.user.username} - {self.availability.service.name}"
 
 class Subscription(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='subscriptions')
