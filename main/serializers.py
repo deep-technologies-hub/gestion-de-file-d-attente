@@ -61,8 +61,8 @@ class TicketSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # We need to get the issue object based on the passed issue ID
-        issue_id = self.context['request'].data.get('issue')
-        issue = Issue.objects.get(id=issue_id)
+        availability_id = self.context['request'].data.get('availability')
+        availability = Issue.objects.get(id=availability_id)
 
         # We retrieve the client from the context (this should be set in the view)
         client = self.context['request'].user.client
@@ -70,7 +70,7 @@ class TicketSerializer(serializers.ModelSerializer):
         # Now we create the Ticket instance
         ticket = Ticket.objects.create(
             client=client,
-            issue=issue,
+            issue=availability,
             scheduled_time=validated_data.get('scheduled_time'),
             status=validated_data.get('status', 'pending')
         )
