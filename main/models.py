@@ -62,8 +62,7 @@ class Availability(models.Model):
 
 class Ticket(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='tickets')
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='tickets')
-    issue_date = models.DateTimeField(auto_now_add=True)
+    availability = models.ForeignKey(Availability, on_delete=models.CASCADE, related_name='tickets')
     status = models.CharField(max_length=100, default='pending')  # Exemples: pending, confirmed, completed
 
     def __str__(self):

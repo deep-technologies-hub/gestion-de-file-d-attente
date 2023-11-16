@@ -57,7 +57,7 @@ class TicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ('id', 'client', 'issue', 'issue_date', 'scheduled_time', 'status')
+        fields = ('id', 'client', 'availability', 'scheduled_time', 'status')
 
     def create(self, validated_data):
         # We need to get the issue object based on the passed issue ID
