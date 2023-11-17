@@ -117,15 +117,15 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = SubscriptionSerializer
     #permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned subscriptions to the logged in user,
-        by filtering against the user's client profile.
-        """
-        user = self.request.user
-        if user.is_authenticated:
-            return Subscription.objects.filter(client__user=user)
-        return Subscription.objects.none()
+    # def get_queryset(self):
+    #     """
+    #     Optionally restricts the returned subscriptions to the logged in user,
+    #     by filtering against the user's client profile.
+    #     """
+    #     user = self.request.user
+    #     if user.is_authenticated:
+    #         return Subscription.objects.filter(client__user=user)
+    #     return Subscription.objects.none()
 
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
