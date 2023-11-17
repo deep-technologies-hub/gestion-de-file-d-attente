@@ -112,6 +112,13 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
     queryset = Availability.objects.all()
     serializer_class = AvailabilitySerializer
 
+    def get_queryset(self):
+        queryset = Availability.objects.all()
+        issue = self.request.query_params.get('issue')
+        if issue is not None:
+            queryset = queryset.filter(issue=issue)
+        return queryset
+
 class SubscriptionViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
