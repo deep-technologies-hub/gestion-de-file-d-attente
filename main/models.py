@@ -54,7 +54,9 @@ class Availability(models.Model):
         # Vérifiez si la durée est définie sur l'objet `Issue` lié
         if self.issue.duration:
             # Calculez l'heure de fin en ajoutant la durée à l'heure de début
-            self.end_time = self.start_time + timedelta(minutes=self.issue.duration)
+            duration_in_minutes = self.issue.duration.total_seconds() / 60
+            self.end_time = self.start_time + timedelta(minutes=duration_in_minutes)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
