@@ -51,31 +51,32 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
     # Here we'll use `StringRelatedField` to show the string representation of the related model
-    client = serializers.StringRelatedField(read_only=True)
-    availability = AvailabilitySerializer(read_only=True)
+    # client = serializers.StringRelatedField(read_only=True)
+    # availability = AvailabilitySerializer(read_only=True)
 
     class Meta:
         model = Ticket
         fields = ('id', 'client', 'availability', 'status')
 
-    def create(self, validated_data):
-        # We need to get the issue object based on the passed issue ID
-        availability_id = self.context['request'].data.get('availability')
-        availability = Availability.objects.get(id=availability_id)
+
+    # def create(self, validated_data):
+    #     # We need to get the issue object based on the passed issue ID
+    #     availability_id = self.context['request'].data.get('availability')
+    #     availability = Availability.objects.get(id=availability_id)
 
         # We retrieve the client from the context (this should be set in the view)
         # client = self.client
 
-        client_id = self.context['request'].data.get('client')
-        client = Client.objects.get(id=client_id)
-        # client = self.context['request'].user.client
+        # client_id = self.context['request'].data.get('client')
+        # client = Client.objects.get(id=client_id)
+        # # client = self.context['request'].user.client
+        #
+        # # Now we create the Ticket instance
+        # ticket = Ticket.objects.create(
+        #     client=client,
+        #     availability=availability,
+        #     scheduled_time=validated_data.get('scheduled_time'),
+        #     status=validated_data.get('status', 'pending')
+        # )
 
-        # Now we create the Ticket instance
-        ticket = Ticket.objects.create(
-            client=client,
-            availability=availability,
-            scheduled_time=validated_data.get('scheduled_time'),
-            status=validated_data.get('status', 'pending')
-        )
-
-        return ticket
+        # return ticket
