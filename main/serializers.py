@@ -39,10 +39,9 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         fields = ['id', 'issue', 'start_time', 'end_time', 'is_available', 'is_free']
 
     def get_end_time(self, obj):
-        # Assurez-vous que l'objet issue a une durée définie
-        if obj.issue.duration:
-            return obj.start_time + timedelta(minutes=obj.issue.duration)
-        return None
+        # Assuming obj.duration is a timedelta object
+        duration_in_minutes = obj.duration.total_seconds() / 60
+        return obj.start_time + timedelta(minutes=duration_in_minutes)
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
