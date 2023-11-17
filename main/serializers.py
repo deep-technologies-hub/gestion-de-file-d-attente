@@ -38,10 +38,10 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         model = Availability
         fields = ['id', 'issue', 'start_time', 'end_time', 'is_available', 'is_free']
 
-    def get_end_time(self, obj):
-        # Assuming obj.duration is a timedelta object
-        duration_in_minutes = obj.issue.duration.total_seconds() / 60
-        return obj.start_time + timedelta(minutes=duration_in_minutes)
+    # def get_end_time(self, obj):
+    #     # Assuming obj.duration is a timedelta object
+    #     duration_in_minutes = obj.issue.duration.total_seconds() / 60
+    #     return obj.start_time + timedelta(minutes=duration_in_minutes)
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
