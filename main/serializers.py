@@ -64,7 +64,10 @@ class TicketSerializer(serializers.ModelSerializer):
         availability = Availability.objects.get(id=availability_id)
 
         # We retrieve the client from the context (this should be set in the view)
-        client = self.client
+        # client = self.client
+
+        client_id = self.context['request'].data.get('client')
+        client = Client.objects.get(id=client_id)
         # client = self.context['request'].user.client
 
         # Now we create the Ticket instance
