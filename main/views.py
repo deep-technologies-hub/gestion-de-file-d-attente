@@ -142,18 +142,18 @@ class TicketViewSet(viewsets.ModelViewSet):
     #         return Ticket.objects.filter(client__user=user)
     #     return Ticket.objects.none()
 
-    def perform_create(self, serializer):
-        """
-        Create a new ticket, ensuring that the client has an active subscription.
-        """
-        client = self.request.user.client
-        if Subscription.objects.filter(client=client, active=True).exists():
-            serializer.save(client=client)
-        else:
-            return Response(
-                {"error": "No active subscription found for this user."},
-                status=status.HTTP_403_FORBIDDEN
-            )
+    # def perform_create(self, serializer):
+    #     """
+    #     Create a new ticket, ensuring that the client has an active subscription.
+    #     """
+    #     client = self.request.user.client
+    #     if Subscription.objects.filter(client=client, active=True).exists():
+    #         serializer.save(client=client)
+    #     else:
+    #         return Response(
+    #             {"error": "No active subscription found for this user."},
+    #             status=status.HTTP_403_FORBIDDEN
+    #         )
 
 class SendEmailView(APIView):
     def post(self, request, *args, **kwargs):
