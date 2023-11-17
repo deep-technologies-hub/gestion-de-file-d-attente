@@ -132,15 +132,15 @@ class TicketViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
     #permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned tickets to the logged in user,
-        by filtering against the user's client profile.
-        """
-        user = self.request.user
-        if user.is_authenticated:
-            return Ticket.objects.filter(client__user=user)
-        return Ticket.objects.none()
+    # def get_queryset(self):
+    #     """
+    #     Optionally restricts the returned tickets to the logged in user,
+    #     by filtering against the user's client profile.
+    #     """
+    #     user = self.request.user
+    #     if user.is_authenticated:
+    #         return Ticket.objects.filter(client__user=user)
+    #     return Ticket.objects.none()
 
     def perform_create(self, serializer):
         """
