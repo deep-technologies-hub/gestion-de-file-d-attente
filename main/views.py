@@ -49,9 +49,7 @@ class VerifyCodeView(views.APIView):
                 return Response({'message': 'Compte activé avec succès.'}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            pass
-
-        return Response({'error': 'Code invalide ou expiré, ou email incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Code invalide ou expiré, ou email incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ResendCodeView(views.APIView):
     def post(self, request, *args, **kwargs):
@@ -79,7 +77,7 @@ class ResendCodeView(views.APIView):
             return Response({'message': 'Un nouveau code de vérification a été envoyé.'}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            return Response({'error': 'Aucun utilisateur avec cet email n’a été trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Aucun utilisateur avec ce username n’a été trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
