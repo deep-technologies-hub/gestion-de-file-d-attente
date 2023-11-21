@@ -34,11 +34,11 @@ class RegisterView(views.APIView):
 
 class VerifyCodeView(views.APIView):
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
+        username = request.data.get('username')
         code = request.data.get('code')
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(username=username)
             verification_query = VerificationCode.objects.filter(client__user=user, code=code, created_at__gte=timezone.now() - timezone.timedelta(minutes=5))
 
             if verification_query.exists():
@@ -55,11 +55,11 @@ class VerifyCodeView(views.APIView):
 
 class ResendCodeView(views.APIView):
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
+        username = request.data.get('username')
 
         try:
-            user = User.objects.get(email=email)
-
+            user = User.objects.get(username=username)
+            email = user.client.email
             # Supprimer l'ancien code s'il existe
             VerificationCode.objects.filter(client__user=user).delete()
 
@@ -80,6 +80,7 @@ class ResendCodeView(views.APIView):
 
         except User.DoesNotExist:
             return Response({'error': 'Aucun utilisateur avec cet email n’a été trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request):
