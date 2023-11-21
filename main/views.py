@@ -1,9 +1,13 @@
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework import status, views
+from rest_framework import status, views, permissions
 import random
 from django.core.mail import send_mail
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .models import Client, Service, Issue, Subscription, Ticket, VerificationCode, Availability
 from .serializers import ClientSerializer, ServiceSerializer, IssueSerializer, SubscriptionSerializer, TicketSerializer, UserSerializer, AvailabilitySerializer
 from rest_framework import status, viewsets
@@ -79,6 +83,20 @@ class ResendCodeView(views.APIView):
 
         except User.DoesNotExist:
             return Response({'error': 'Aucun utilisateur avec ce username n’a été trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = TokenObtainPairSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
