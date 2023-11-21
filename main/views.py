@@ -15,8 +15,9 @@ class RegisterView(views.APIView):
     def post(self, request, *args, **kwargs):
         user_serializer = UserSerializer(data=request.data)
         if user_serializer.is_valid():
+            user_serializer.is_active = True
             user = user_serializer.save()
-            client = Client.objects.create(user=user, phone_number=request.data['phone_number'], email=request.data['email'])
+            client = Client.objects.create(user=user, phone_number=request.data['phone_number'], email=request.data['email'],activated=False)
             # Générer un code de vérification
             code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
             VerificationCode.objects.create(client=client, code=code)
@@ -43,7 +44,7 @@ class VerifyCodeView(views.APIView):
 
             if verification_query.exists():
                 verification = verification_query.first()
-                user.is_active = True
+                user.client.activated=True
                 user.save()
                 verification.delete()  # Supprimer le code après utilisation
                 return Response({'message': 'Compte activé avec succès.'}, status=status.HTTP_200_OK)
