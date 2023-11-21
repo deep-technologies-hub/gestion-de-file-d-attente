@@ -4,16 +4,16 @@ from rest_framework.views import APIView
 from rest_framework import status, views, permissions
 import random
 from django.core.mail import send_mail
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .models import Client, Service, Issue, Subscription, Ticket, VerificationCode, Availability
-from .serializers import ClientSerializer, ServiceSerializer, IssueSerializer, SubscriptionSerializer, TicketSerializer, \
-    UserSerializer, AvailabilitySerializer
+from .serializers import ClientSerializer, ServiceSerializer, IssueSerializer, SubscriptionSerializer, TicketSerializer, UserSerializer, AvailabilitySerializer
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from django.utils import timezone
 from django.contrib.auth.models import User
-
 
 class RegisterView(views.APIView):
     def post(self, request, *args, **kwargs):
@@ -21,8 +21,7 @@ class RegisterView(views.APIView):
         if user_serializer.is_valid():
             user_serializer.is_active = True
             user = user_serializer.save()
-            client = Client.objects.create(user=user, phone_number=request.data['phone_number'],
-                                           email=request.data['email'], activated=False)
+            client = Client.objects.create(user=user, phone_number=request.data['phone_number'], email=request.data['email'],activated=False)
             # Générer un code de vérification
             code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
             VerificationCode.objects.create(client=client, code=code)
@@ -45,21 +44,17 @@ class VerifyCodeView(views.APIView):
 
         try:
             user = User.objects.get(username=username)
-            verification_query = VerificationCode.objects.filter(client__user=user, code=code,
-                                                                 created_at__gte=timezone.now() - timezone.timedelta(
-                                                                     minutes=5))
+            verification_query = VerificationCode.objects.filter(client__user=user, code=code, created_at__gte=timezone.now() - timezone.timedelta(minutes=5))
 
             if verification_query.exists():
                 verification = verification_query.first()
-                user.client.activated = True
+                user.client.activated=True
                 user.save()
                 verification.delete()  # Supprimer le code après utilisation
                 return Response({'message': 'Compte activé avec succès.'}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            return Response({'error': 'Code invalide ou expiré, ou email incorrect.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'error': 'Code invalide ou expiré, ou email incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ResendCodeView(views.APIView):
     def post(self, request, *args, **kwargs):
@@ -87,49 +82,43 @@ class ResendCodeView(views.APIView):
             return Response({'message': 'Un nouveau code de vérification a été envoyé.'}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            return Response({'error': 'Aucun utilisateur avec ce username n’a été trouvé.'},
-                            status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Aucun utilisateur avec ce username n’a été trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
-
-class CustomAuthToken(ObtainAuthToken):
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = TokenObtainPairSerializer
+    # permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'username': user.username
-        })
+        # serializer = self.get_serializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
 
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
 
-
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    # permission_classes = [permissions.IsAuthenticated]
-
+    #permission_classes = [permissions.IsAuthenticated]
 
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-    # permission_classes = [permissions.IsAuthenticated]
-
+    #permission_classes = [permissions.IsAuthenticated]
 
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-
-    # permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         queryset = Issue.objects.all()
@@ -137,7 +126,6 @@ class IssueViewSet(viewsets.ModelViewSet):
         if service is not None:
             queryset = queryset.filter(service=service)
         return queryset
-
 
 class AvailabilityViewSet(viewsets.ModelViewSet):
     queryset = Availability.objects.all()
@@ -150,11 +138,10 @@ class AvailabilityViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(issue=issue)
         return queryset
 
-
 class SubscriptionViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     # def get_queryset(self):
     #     """
@@ -166,11 +153,10 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     #         return Subscription.objects.filter(client__user=user)
     #     return Subscription.objects.none()
 
-
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     # def get_queryset(self):
     #     """
@@ -195,13 +181,12 @@ class TicketViewSet(viewsets.ModelViewSet):
     #             status=status.HTTP_403_FORBIDDEN
     #         )
 
-
 class SendEmailView(APIView):
     def post(self, request, *args, **kwargs):
         subject = request.data.get('subject', 'test')
         message = request.data.get('message', 'yes')
         from_email = 'msakande21@gmail.com'  # Votre adresse e-mail configurée
-        to_email = request.data.get('to_email', 'shunikiema@gmail.com')
+        to_email = request.data.get('to_email','shunikiema@gmail.com')
 
         if not to_email:
             return JsonResponse({'error': 'Adresse e-mail destinataire manquante.'}, status=400)
