@@ -86,11 +86,9 @@ class ResendCodeView(views.APIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
-    # permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        # serializer = self.get_serializer(data=request.data)
-        serializer = UserSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
 
         try:
             serializer.is_valid(raise_exception=True)
