@@ -6,6 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.hashers import make_password
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -19,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         # Effectuer la validation standard d'abord
@@ -31,16 +33,19 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return data
 
+
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = ('id', 'user', 'phone_number', 'email', 'activated')
+
 
 class VerificationCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = VerificationCode
         fields = ('code', 'client', 'created_at')
         read_only_fields = ('created_at',)
+
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,14 +55,18 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 class IssueSerializer(serializers.ModelSerializer):
     formatted_duration = serializers.SerializerMethodField()
+
     class Meta:
         model = Issue
-        fields = ('id', 'service', 'name', 'duration','formatted_duration')
+        fields = ('id', 'service', 'name', 'duration', 'formatted_duration')
+
     def get_formatted_duration(self, obj):
-        # Supposons que `duration` est en minutes
-        hours = obj.duration // 60
-        minutes = obj.duration % 60
+        # Convertir timedelta en total de minutes
+        total_minutes = obj.duration.total_seconds() / 60
+        hours = int(total_minutes // 60)
+        minutes = int(total_minutes % 60)
         return f"{hours}h {minutes}min"
+
 
 class AvailabilitySerializer(serializers.ModelSerializer):
     formatted_duration = serializers.SerializerMethodField()
@@ -66,7 +75,6 @@ class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Availability
         fields = ['id', 'issue', 'start_time', 'end_time', 'is_available', 'is_free']
-
 
     def get_end_time(self, obj):
         # Assuming obj.duration is a timedelta object
@@ -89,25 +97,24 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ('id', 'client', 'availability', 'status')
 
-
     # def create(self, validated_data):
     #     # We need to get the issue object based on the passed issue ID
     #     availability_id = self.context['request'].data.get('availability')
     #     availability = Availability.objects.get(id=availability_id)
 
-        # We retrieve the client from the context (this should be set in the view)
-        # client = self.client
+    # We retrieve the client from the context (this should be set in the view)
+    # client = self.client
 
-        # client_id = self.context['request'].data.get('client')
-        # client = Client.objects.get(id=client_id)
-        # # client = self.context['request'].user.client
-        #
-        # # Now we create the Ticket instance
-        # ticket = Ticket.objects.create(
-        #     client=client,
-        #     availability=availability,
-        #     scheduled_time=validated_data.get('scheduled_time'),
-        #     status=validated_data.get('status', 'pending')
-        # )
+    # client_id = self.context['request'].data.get('client')
+    # client = Client.objects.get(id=client_id)
+    # # client = self.context['request'].user.client
+    #
+    # # Now we create the Ticket instance
+    # ticket = Ticket.objects.create(
+    #     client=client,
+    #     availability=availability,
+    #     scheduled_time=validated_data.get('scheduled_time'),
+    #     status=validated_data.get('status', 'pending')
+    # )
 
-        # return ticket
+    # return ticket
