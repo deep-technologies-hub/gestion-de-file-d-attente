@@ -2,6 +2,8 @@ from datetime import timedelta
 from rest_framework import serializers
 from .models import Client, Service, Issue, Subscription, Ticket, Availability, VerificationCode
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.hashers import make_password
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,6 +18,18 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        # Effectuer la validation standard d'abord
+        data = super().validate(attrs)
+
+        # Vérifier si le profil client de l'utilisateur est validé
+        user = self.user
+        if hasattr(user, 'client') and not user.client.validated:
+            raise AuthenticationFailed('Le compte client n’est pas validé.')
+
+        return data
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
