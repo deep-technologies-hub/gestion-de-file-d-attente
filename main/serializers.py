@@ -62,7 +62,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
     def get_formatted_duration(self, obj):
         # Convertir timedelta en total de minutes
-        minutes = obj.duration.total_seconds() / 60
+        minutes = obj.duration.total_seconds() // 60
         return f"{minutes}min"
 
 
