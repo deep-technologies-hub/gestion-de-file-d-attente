@@ -49,22 +49,30 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
+    formatted_duration = serializers.SerializerMethodField()
     class Meta:
         model = Issue
-        fields = ('id', 'service', 'name', 'duration')
-
+        fields = ('id', 'service', 'name', 'duration','formatted_duration')
+    def get_formatted_duration(self, obj):
+        # Supposons que `duration` est en minutes
+        hours = obj.duration // 60
+        minutes = obj.duration % 60
+        return f"{hours}h {minutes}min"
 
 class AvailabilitySerializer(serializers.ModelSerializer):
+    formatted_duration = serializers.SerializerMethodField()
     end_time = serializers.SerializerMethodField()
 
     class Meta:
         model = Availability
         fields = ['id', 'issue', 'start_time', 'end_time', 'is_available', 'is_free']
 
+
     def get_end_time(self, obj):
         # Assuming obj.duration is a timedelta object
         duration_in_minutes = obj.issue.duration.total_seconds() / 60
         return obj.start_time + timedelta(minutes=duration_in_minutes)
+
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
