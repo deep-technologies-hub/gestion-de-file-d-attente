@@ -69,7 +69,6 @@ class IssueSerializer(serializers.ModelSerializer):
 
 class AvailabilitySerializer(serializers.ModelSerializer):
     formatted_duration = serializers.SerializerMethodField()
-    end_time = serializers.SerializerMethodField()
 
     class Meta:
         model = Availability
