@@ -1,4 +1,6 @@
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status, views, permissions
@@ -108,6 +110,18 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     #permission_classes = [permissions.IsAuthenticated]
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_user_and_client(request, username):
+    try:
+        user = User.objects.get(username=username)
+        if hasattr(user, 'client'):
+            user.client.delete()  # Supprime le client si l'utilisateur en a un
+        user.delete()  # Supprime l'utilisateur
+        return JsonResponse({'message': 'User and associated client deleted successfully.'}, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found.'}, status=404)
 
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
