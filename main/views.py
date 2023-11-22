@@ -21,6 +21,7 @@ class RegisterView(views.APIView):
         if user_serializer.is_valid():
             user_serializer.is_active = True
             user = user_serializer.save()
+            user.set_password(user.password)
             client = Client.objects.create(user=user, phone_number=request.data['phone_number'], email=request.data['email'],activated=False)
             # Générer un code de vérification
             code = ''.join([str(random.randint(0, 9)) for _ in range(6)])

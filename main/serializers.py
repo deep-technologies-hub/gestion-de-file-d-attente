@@ -9,9 +9,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'password']
 
-    # def create(self, validated_data):
-    #     validated_data['password'] = make_password(validated_data.get('password'))
-    #     return super(UserSerializer, self).create(validated_data)
+    def create(self, validated_data):
+        user = User(
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
