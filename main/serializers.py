@@ -73,12 +73,21 @@ class AvailabilitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Availability
-        fields = ['id', 'issue', 'start_time', 'end_time', 'is_available', 'is_free']
+        fields = ['id', 'issue', 'start_time', 'formatted_start_time', 'is_available', 'is_free']
 
-    def get_end_time(self, obj):
-        # Assuming obj.duration is a timedelta object
+    def get_formatted_start_time(self, obj):
+        # Liste des mois en français
+        mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+
+        # Calculer l'heure de fin
         duration_in_minutes = obj.issue.duration.total_seconds() / 60
-        return obj.start_time + timedelta(minutes=duration_in_minutes)
+        end_time = obj.start_time + timedelta(minutes=duration_in_minutes)
+
+        # Format start_time en utilisant la liste des mois
+        start_month = mois[obj.start_time.month - 1]
+        formatted_start_time = f"{obj.start_time.day} {start_month} de {obj.start_time.strftime('%H:%M')} à {end_time.strftime('%H:%M')}"
+
+        return formatted_start_time
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
