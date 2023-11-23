@@ -11,7 +11,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Client, Service, Issue, Subscription, Ticket, VerificationCode, Availability, Category
-from .serializers import ClientSerializer, ServiceSerializer, IssueSerializer, SubscriptionSerializer, TicketSerializer, UserSerializer, AvailabilitySerializer
+from .serializers import ClientSerializer, ServiceSerializer, IssueSerializer, SubscriptionSerializer, TicketSerializer, \
+    UserSerializer, AvailabilitySerializer, CategorySerializer
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from django.utils import timezone
@@ -125,7 +126,7 @@ def delete_user_and_client(request, username):
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
-    serializer_class = ServiceSerializer
+    serializer_class = CategorySerializer
     #permission_classes = [permissions.IsAuthenticated]
 
 class ServiceViewSet(viewsets.ModelViewSet):
