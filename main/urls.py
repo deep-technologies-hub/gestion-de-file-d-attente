@@ -3,11 +3,12 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import AvailabilityViewSet, ClientViewSet, ServiceViewSet, IssueViewSet, SubscriptionViewSet, TicketViewSet, \
     LogoutView, RegisterView, VerifyCodeView, ResendCodeView, SendEmailView, CustomTokenObtainPairView, \
-    delete_user_and_client
+    delete_user_and_client, CategoryViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = DefaultRouter()
 router.register(r'clients', ClientViewSet)
+router.register(r'categories', CategoryViewSet)
 router.register(r'services', ServiceViewSet)
 router.register(r'issues', IssueViewSet)
 router.register(r'subscriptions', SubscriptionViewSet)

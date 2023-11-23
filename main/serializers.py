@@ -1,6 +1,6 @@
 from datetime import timedelta
 from rest_framework import serializers
-from .models import Client, Service, Issue, Subscription, Ticket, Availability, VerificationCode
+from .models import Client, Service, Issue, Subscription, Ticket, Availability, VerificationCode, Category
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
@@ -46,6 +46,10 @@ class VerificationCodeSerializer(serializers.ModelSerializer):
         fields = ('code', 'client', 'created_at')
         read_only_fields = ('created_at',)
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'description')
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:

@@ -10,7 +10,7 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .models import Client, Service, Issue, Subscription, Ticket, VerificationCode, Availability
+from .models import Client, Service, Issue, Subscription, Ticket, VerificationCode, Availability, Category
 from .serializers import ClientSerializer, ServiceSerializer, IssueSerializer, SubscriptionSerializer, TicketSerializer, UserSerializer, AvailabilitySerializer
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -122,6 +122,11 @@ def delete_user_and_client(request, username):
         return JsonResponse({'message': 'User and associated client deleted successfully.'}, status=200)
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found.'}, status=404)
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = ServiceSerializer
+    #permission_classes = [permissions.IsAuthenticated]
 
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
